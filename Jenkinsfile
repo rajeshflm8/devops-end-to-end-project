@@ -4,25 +4,36 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Checking out source code'
+                checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Terraform Init') {
             steps {
-                echo 'Build started'
+                dir('terraform') {
+                    bat 'terraform init'
+                }
             }
         }
 
-        stage('Test') {
+        stage('Terraform Validate') {
             steps {
-                echo 'Testing application'
+                dir('terraform') {
+                    bat 'terraform validate'
+                }
             }
         }
 
-        stage('Deploy') {
+        stage('Terraform Plan') {
             steps {
-                echo 'Deployment completed'
+                withCredentials([
+                    string(credentialsId: 'aws-access-key', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+                    dir('terraform') {
+                        bat 'terraform plan'
+                    }
+                }
             }
         }
     }
