@@ -31,7 +31,7 @@ pipeline {
                     string(credentialsId: 'aws-secret', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
                     dir('terraform') {
-                        bat 'terraform plan'
+                        bat 'terraform plan1'
                     }
                 }
             }
